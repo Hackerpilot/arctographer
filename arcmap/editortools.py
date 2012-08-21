@@ -41,6 +41,7 @@ PHYSICS_SELECT_ID = 2
 CIRCLE_DRAW_ID = 3
 POLYGON_DRAW_ID = 4
 LIGHT_DRAW_ID = 5
+BLOCK_DRAW_ID = 6
 # Add new codes here for new tools
 
 
@@ -396,6 +397,9 @@ class TileSelectTool(TileTool):
 		context.set_line_width(1.0)
 		context.stroke()
 
+	def listenResize(self, width, height, xoffset, yoffset):
+		pass
+
 
 class TileDrawTool(TileTool):
 	def __init__(self, controller, maxX, maxY):
@@ -505,6 +509,20 @@ class TileDrawTool(TileTool):
 			h = (abs(self.selectionY2 - self.selectionY1) + 1) * ts
 			context.rectangle(x, y, w, h)
 			context.fill()
+
+		fc = graphics.getHighlightColor()
+		hc = graphics.getBackgroundColor()
+		context.set_source_rgba(fc.r, fc.g, fc.b, 0.5)
+		context.rectangle(x, y, w, h)
+		context.fill()
+		context.rectangle(x + 0.5, y + 0.5, w, h)
+		context.set_source_rgba(fc.r, fc.g, fc.b, 1.0)
+		context.set_line_width(3.0)
+		context.stroke()
+		context.rectangle(x + 0.5, y + 0.5, w, h)
+		context.set_source_rgba(hc.r, hc.g, hc.b, 1.0)
+		context.set_line_width(1.0)
+		context.stroke()
 
 	def listenSetSelection(self, index, brush, x1, y1, x2, y2):
 		self.__selectionIndex = index
@@ -844,3 +862,9 @@ class PolygonDrawTool(ShapeTool):
 		if self.__drawing == True:
 			graphics.drawShape(self.__polygon, context, True)
 		ShapeTool.draw(self, context)
+
+class BlockTool(EditorTool):
+	def __init__(self, controller, maxX, maxY):
+		EditorTool.__init__(self, controller, maxX, maxY)
+		self.setInstructions("Left-click to select tiles. WASD or arrow keys"
+			+ " to toggle blocking")

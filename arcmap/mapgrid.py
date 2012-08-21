@@ -92,6 +92,8 @@ class MapGrid(tilegrid.TileGrid, mapcontroller.MapListener):
 			pixelHeight), editortools.CIRCLE_DRAW_ID)
 		self.addTool(editortools.PolygonDrawTool(controller, pixelWidth,
 			pixelHeight), editortools.POLYGON_DRAW_ID)
+		self.addTool(editortools.BlockTool(controller, pixelWidth,
+			pixelHeight), editortools.BLOCK_DRAW_ID)
 
 		self.createScrollBars()
 

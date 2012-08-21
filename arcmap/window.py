@@ -85,6 +85,8 @@ uiString = """
 		<toolitem action="PhysicsSelect"/>
 		<toolitem action="PolygonDraw"/>
 		<toolitem action="CircleDraw"/>
+		<separator/>
+		<toolitem action="BlockDraw"/>
 	</toolbar>
 	<toolbar name="Layers">
 		<toolitem action="addLayer"/>
@@ -236,8 +238,8 @@ class MainWindow(mapcontroller.MapListener):
 				+ " on the map",  editortools.POLYGON_DRAW_ID),
 			("CircleDraw", None, None, "<Control>C", "Draw circles"
 				+ " on the map", editortools.CIRCLE_DRAW_ID),
-			("LightDraw", None, None, None, "Place lights on the map",
-				editortools.LIGHT_DRAW_ID)
+			("BlockDraw", None, None, None, "Edit tile blocking information",
+				editortools.BLOCK_DRAW_ID)
 			], editortools.TILE_DRAW_ID, self.toolSelect)
 
 		self.uimanager.insert_action_group(actionGroup, 0)
@@ -345,6 +347,12 @@ class MainWindow(mapcontroller.MapListener):
 		staticCImage.show()
 		staticCButton.set_icon_widget(staticCImage)
 
+		blockButton = self.uimanager.get_widget("/MapTools/BlockDraw")
+		blockImage = gtk.image_new_from_file(datafiles.getIconPath(
+			"tileBlock.png"))
+		blockImage.show()
+		blockButton.set_icon_widget(blockImage)
+
 		bar.set_sensitive(False)
 		return bar
 
@@ -434,7 +442,10 @@ class MainWindow(mapcontroller.MapListener):
 		saveDialog.add_filter(jsonFilter)
 		response = saveDialog.run()
 		if response == gtk.RESPONSE_ACCEPT:
-			self.getController().setFileName(saveDialog.get_filename())
+			name = saveDialog.get_filename()
+			if not name.endswith(".json"):
+				name = name + ".json"
+			self.getController().setFileName(name)
 			self.getController().save()
 			saveDialog.destroy()
 			self.setTitle()

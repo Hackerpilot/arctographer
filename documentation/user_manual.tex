@@ -1,0 +1,328 @@
+\documentclass[12pt,letterpaper]{article}
+
+\usepackage{fullpage}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=OliveGreen,
+	urlcolor=NavyBlue
+}
+
+\begin{document}
+
+\title{Arctographer User Manual - Version 0.3}
+\author{Brian Schott (SirAlaran)\\
+briancschott@gmail.com\\
+\url{http://www.hackerpilot.org}/}
+\date{December 2009}
+\maketitle
+
+\tableofcontents
+
+\section{Overview}
+Arctographer is an editor for tile-based game levels. It is primarily designed
+to work with the ArcLib game programming library for the D programming language,
+but there is nothing that specifically ties the editor to Arclib. Any program
+that understands the file format that Arctographer uses will be able to use maps
+created with it. For details on the file format, see
+\hyperref[sec:fileformat]{section \ref{sec:fileformat}}.
+
+\section{Download and Installation}
+\subsection{Where to Download}
+Packaged versions of Arctographer are available for download from
+\url{http://www.hackerpilot.org/map_editor.php}. This includes a Windows
+installer and a TAR archive for Linux. Development of Arctographer takes place
+on the ArcLib project site, which is hosted on dsource.org. To check out a copy
+of the current source code, use the following command: \begin{verbatim}
+svn co http://svn.dsource.org/projects/arclib/tools/arctographer
+\end{verbatim}
+\subsection{System Requirements}
+\begin{enumerate}
+	\item GTK+ runtime libraries. (GTK+, GLIB, Cairo, etc...) These are included
+		by default on almost any Linux distribution. For Windows, use the
+		installers located at
+		\url{http://gtk-win.sourceforge.net/home/index.php/en/Downloads}.
+	\item Python 2.6. This is included in almost any Linux distribution or Mac
+		OS-X install. For Windows, use the installers located at
+		\url{http://python.org/download/}
+\end{enumerate}
+\subsection{Running Arctographer}
+\begin{itemize}
+	\item Windows: Rename the script ``arctographer'' to ``arctographer.pyw'' and
+		double-click on it.
+	\item Linux: Make the script executable through your favorite file manager,
+		or use the command \begin{verbatim}chmod +x arctographer\end{verbatim}
+\end{itemize}
+Arctographer accepts a file name as a command-line argument. To see other
+command-line options, run \begin{verbatim}./arctographer --help\end{verbatim}
+
+\section{Tile maps}
+\subsection{Overview}
+\subsection{The Tile Palette}
+\subsection{The Layer View}
+\subsection{The Map View}
+
+\section{Parallax backgrounds}
+\subsection{Overview}
+\subsection{Adding Layers}
+
+\section{Physics}
+\subsection{Overview}
+\subsection{Adding Shapes}
+\subsection{Modifying Shapes}
+\subsection{Deleting Shapes}
+
+\section{File Format}
+\label{sec:fileformat}
+\subsection{Specification}
+
+Arctographer writes files in the \href{http://json.org/}{JSON} file format. JSON
+was chosen because it is simple, very fast to parse, and human-readable. The
+root object of the file is the level.
+\subsubsection*{Level}
+A level consists of:
+\begin{itemize}
+	\item one \hyperref[sec:tilemap]{``tileMap''} object
+	\item one or more \hyperref[sec:background]{``background''} objects
+	\item one \hyperref[sec:blazeworld]{``blazeworld''} object
+\end{itemize}
+\subsubsection*{tileMap}
+\label{sec:tilemap}
+A tileMap consists of:
+\begin{itemize}
+	\item one ``layers'' array, which consists of \hyperref[sec:layer]{layer} objects
+	\item one ``images'' array, which consists of \hyperref[sec:image]{image} objects
+	\item one ``height'' value -- an integer specifying the height of the
+		map measured in tiles
+	\item one ``tileSize'' value -- an integer specifying the width and
+		height of a single tile measured in pixels
+	\item one ``width'' value -- an integer specifying the width of the
+		map measured in tiles
+\end{itemize}
+
+\subsubsection*{layer}
+\label{sec:layer}
+A layer consists of:
+\begin{itemize}
+	\item one ``index'' value -- non-negative integer specifying the
+		layer's place in the drawing stack. Layers with a lower index are drawn
+		underneath layers with a higher index
+	\item one ``tiles'' array, which consists of \hyperref[sec:tile]{tile} objects
+	\item zero or one ``name'' values -- a string describing the layer
+	\item one ``visible'' value -- a boolean indicating whether or not this layer
+		is visible by default
+\end{itemize}
+
+\subsubsection*{tile}
+\label{sec:tile}
+A tile consists of:
+\begin{itemize}
+	\item one ``y'' value -- a non-negative integer specifying the vertical
+		position of the tile
+	\item one ``x'' value -- a non-negative integer specifying the horizontal
+		position of the tile
+	\item one ``iy'' value -- a non-negative integer specifying the vertical
+		position of the image section to use for this tile
+	\item one ``ix'' value -- a non-negative integer specifying the horizontal
+		position of the image section to use for this tile
+	\item one ``ii'' value -- a non-negative integer that corresponds to the
+		``index'' value of an \hyperref[sec:image]{image}
+\end{itemize}
+
+\subsubsection*{image}
+\label{sec:image}
+An image consists of:
+\begin{itemize}
+	\item one ``index'' value -- a non-negative integer that uniquely identifies this
+		image.
+	\item one ``fileName'' value -- a string specifying the path to the image
+		file. Currently only the Portable Network Graphics (.png) format is
+		valid.
+\end{itemize}
+
+\subsubsection*{background}
+\label{sec:background}
+A background consists of:
+\begin{itemize}
+	\item one ``bgColor'' vaule -- a string in the format ``\#rrggbbaa'' where
+		r, g, b, and a are hexadecimal digits specifying the intensity of the
+		red, green, blue, and alpha components of the color, respectively. The
+		``\#'' sign is for consistency with HTML markup. The alpha component
+		should almost always be ``ff''
+	\item one ``parallaxes'' array, which consists of zero or more
+		\hyperref[sec:parallax]{parallax} objects.
+\end{itemize}
+
+\subsubsection*{parallax}
+\label{sec:parallax}
+A parallax consists of:
+\begin{itemize}
+	\item one ``index'' value -- a non-negative integer specifying the position of
+		this parallax layer in the drawing stack. Layers with lower index values
+		will be drawn below layers with higher index values.
+	\item one ``hTile'' value -- a boolean value indicating whether or not the
+		background should be tiled (repeated) horizontally.
+	\item one ``vTile'' value -- a boolean value indicating whether or not the
+		background should be tiled (repeated) vertically.
+	\item one ``hScroll'' value -- a boolean value indicating whether or not the
+		background should scroll horizontally (true), or be fixed on the x-axi
+		(false)
+	\item one ``vScroll'' value -- a boolean value indicating whether or not the
+		background should scroll vertically (true), or be fixed on the y-axis
+		(false)
+	\item one ``fileName'' value -- a string specifying the path to the image
+		file. Currently only the Portable Network Graphics (.png) format is
+		valid.
+	\item one ``hScrollSpeed'' value -- a floating-point number specifying the
+		ratio between camera movement and parallax movement along the x-axis.
+	\item one ``vScrollSpeed'' value -- a floating-point number specifying the
+		ratio between camera movement and parallax movement along the y-axis.
+	\item one ``visible'' value -- a boolean indicating whether or not this layer
+		is visible by default
+\end{itemize}
+
+\subsubsection*{blazeworld}
+\label{sec:blazeworld}
+A blazeworld consists of:
+\begin{itemize}
+	\item one ``shapes'' array, which consists of zero or more
+		\hyperref[sec:shape]{shapes}
+	\item one ``gravityX'' value -- a floating-point number specifying the
+		strength of gravity in the x direction in $\frac{meters}{second^{2}}$.
+		This is usually zero.
+	\item one ``gravityY'' value -- a floating-point number specifying the
+		strength of gravity in the y direction in $\frac{meters}{second^{2}}$.
+		This is usually -9.8.
+\end{itemize}
+
+\subsubsection*{shape}
+\label{sec:shape}
+A shape consists of:
+\begin{itemize}
+	\item one ``damage'' value -- a floating-point number specifying the amount
+		of damage taken by an object that comes into contact with this shape per
+		second. Usually 0.0 for terrain.
+	\item one ``friction'' value -- a floating-point number specifying the
+		coefficient of friction for this shape.
+	\item one ``restitution'' vaule -- a floating-point number specifying the
+		coefficient of restitution for this shape.
+	\item one ``type'' value -- a string specifying the type of shape. Valid
+		values are ``circle'' and ``polygon''.
+	\item one ``center'' value if the shape is a circle, otherwise zero. The
+		center is a \hyperref[sec:point]{``point''} object.
+	\item one ``points'' array if the shape is a polygon, otherwise zero.
+		Each element of the array is a \hyperref[sec:point]{``point''}
+\end{itemize}
+
+
+\subsubsection*{point}
+\label{sec:point}
+A point consists of:
+\begin{itemize}
+	\item one ``x'' value -- an integer specifying the x-coordinate of this
+		point on the map. Units are pixels.
+	\item one ``y'' value -- an integer specifying the y-coordinate of this
+		point on the map. Units are pixels.
+\end{itemize}
+
+\subsection{Example}
+\begin{verbatim}
+{
+    "tileMap": {
+        "layers": [
+            {
+                "index": 0,
+                "tiles": [
+                    {
+                        "y": 0,
+                        "x": 0,
+                        "iy": 19,
+                        "ii": 0,
+                        "ix": 5
+                    },
+                    {
+                        "y": 1,
+                        "x": 0,
+                        "iy": 21,
+                        "ii": 0,
+                        "ix": 1
+                    }
+                ],
+                "name": "Base",
+                "visible": true
+            },
+        ],
+        "images": [
+            {
+                "index": 0,
+                "fileName": "tiles/free_tileset_version_10.png"
+            }
+        ],
+        "height": 15,
+        "tileSize": 32,
+        "width": 20
+    },
+    "blazeWorld": {
+        "shapes": [
+            {
+                "points": [
+                    {
+                        "y": 32,
+                        "x": 208
+                    },
+                    {
+                        "y": 64,
+                        "x": 256
+                    },
+                    {
+                        "y": 160,
+                        "x": 224
+                    },
+                    {
+                        "y": 96,
+                        "x": 128
+                    }
+                ],
+                "type": "polygon",
+                "damage": 0.0,
+                "friction": 1.0,
+                "restitution": 0.0
+            },
+            {
+                "center": {
+                    "y": 208,
+                    "x": 176
+                },
+                "damage": 0.0,
+                "friction": 1.0,
+                "radius": 80,
+                "type": "circle",
+                "restitution": 0.0
+            }
+        ],
+        "gravityX": 0.0,
+        "gravityY": -9.8000000000000007
+    },
+    "background": {
+        "bgColor": "#227db8ff",
+        "parallaxes": [
+            {
+                "hTile": true,
+                "index": 0,
+                "vTile": false,
+                "vScroll": true,
+                "fileName": "parallax/forest.png",
+                "hScrollSpeed": 0.5,
+                "visible": true,
+                "hScroll": true,
+                "vScrollSpeed": 1.0
+            }
+        ]
+    }
+}
+
+\end{verbatim}
+
+
+\end{document}

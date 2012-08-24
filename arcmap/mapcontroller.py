@@ -609,9 +609,10 @@ class MapController:
 		brushSurface = cairo.ImageSurface(cairo.FORMAT_ARGB32,
 			int((abs(x2 - x1) + 1) * ts), int((abs(y2 - y1) + 1) * ts))
 		context = cairo.Context(brushSurface)
-		context.set_source_surface(self.__images[index], -(x1 * ts), -(y1 * ts))
-		context.set_operator(cairo.OPERATOR_SOURCE)
-		context.paint()
+		if index and index > 0:
+			context.set_source_surface(self.__images[index], -(x1 * ts), -(y1 * ts))
+			context.set_operator(cairo.OPERATOR_SOURCE)
+			context.paint()
 		for listener in self.__listeners:
 			listener.listenSetSelection(index, brushSurface, x1, y1, x2, y2)
 

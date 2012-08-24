@@ -883,8 +883,8 @@ class BlockTool(TileSelectTool):
 			self.__modifyBlocks(2)
 			return True
 		if key == 65535: #delete
-			for i in range(self.selectX1, self.selectX2):
-				for j in range(self.selectY1, self.selectY2):
+			for i in range(self.selectX1, self.selectX2 + 1):
+				for j in range(self.selectY1, self.selectY2 + 1):
 					self.getController().clearBlock(i, j)
 			return True
 		if key == 98: #b
@@ -927,3 +927,5 @@ class BlockTool(TileSelectTool):
 		self.getController().drawBlocks(context)
 		TileSelectTool.draw(self, context)
 
+	def mouseButtonRelease(self, button, time):
+		TileTool.mouseButtonRelease(self, button, time)

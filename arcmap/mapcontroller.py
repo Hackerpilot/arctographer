@@ -245,6 +245,17 @@ class MapController:
 		# True to save physics world
 		self.saveWorld = True
 
+	def toggleBlock(self, direction, x, y):
+		if x > self.__map.width or y > self.__map.height or x < 0 or y < 0:
+			return
+		self.__map.blocking[x][y] ^= direction;
+
+	def clearBlock(self, x, y):
+		self.__map.blocking[x][y] = 0
+
+	def setBlock(self, direction, x, y):
+		self.__map.blocking[x][y] |= direction
+
 	def setThumbnailSource(self, source):
 		self.__thumbnailSource = source
 
@@ -499,6 +510,13 @@ class MapController:
 			return index
 		else:
 			return None
+
+	def drawBlocks(self, context):
+		for x in range(self.__map.width):
+			for y in range(self.__map.height):
+				graphics.drawBlockInfo(context, self.__map.tileSize, x, y,
+					self.__map.blocking[x][y])
+
 
 	def drawShapes(self, context):
 		"""

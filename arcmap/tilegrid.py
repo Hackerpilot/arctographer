@@ -147,7 +147,6 @@ class TileGrid(gtk.DrawingArea):
 		if len(self.__tools) > 0:
 			r = self.__tools[self.__selectedTool].keyPress(event.keyval)
 			if r:
-				self.redrawBuffer()
 				self.queue_draw()
 
 	def __validateZoom(self):

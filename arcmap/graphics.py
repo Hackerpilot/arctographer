@@ -416,3 +416,41 @@ def getDeletePattern(size):
 	context.stroke()
 	return cairo.SurfacePattern(surface)
 
+def drawBlockInfo(context, tileSize, x, y, blocks):
+	quarter = tileSize / 4
+
+	#top
+	if blocks & 1:
+		context.move_to(x * tileSize, y * tileSize)
+		context.line_to((x + 1) * tileSize, y * tileSize)
+		context.line_to((x + 1) * tileSize - quarter, (y * tileSize) + quarter)
+		context.line_to((x * tileSize) + quarter, (y * tileSize) + quarter)
+		context.set_source_rgba(1.0, 0.0, 0.0, 0.75)
+		context.fill()
+
+	#right
+	if blocks & 2:
+		context.move_to((x + 1) * tileSize, y * tileSize)
+		context.line_to((x + 1) * tileSize, (y + 1) * tileSize)
+		context.line_to((x + 1) * tileSize - quarter, ((y + 1) * tileSize) - quarter)
+		context.line_to((x + 1) * tileSize - quarter , (y * tileSize) + quarter)
+		context.set_source_rgba(1.0, 0.0, 0.0, 0.75)
+		context.fill()
+
+	#bottom
+	if blocks & 4:
+		context.move_to(x * tileSize, (y + 1) * tileSize)
+		context.line_to(x * tileSize + quarter, ((y + 1) * tileSize) - quarter)
+		context.line_to((x + 1) * tileSize - quarter, ((y + 1) * tileSize) - quarter)
+		context.line_to((x + 1) * tileSize, (y + 1) * tileSize)
+		context.set_source_rgba(1.0, 0.0, 0.0, 0.75)
+		context.fill()
+
+	#left
+	if blocks & 8:
+		context.move_to(x * tileSize, y * tileSize)
+		context.line_to((x * tileSize) + quarter, (y * tileSize) + quarter)
+		context.line_to((x * tileSize) + quarter, ((y + 1) * tileSize) - quarter)
+		context.line_to(x * tileSize, (y + 1) * tileSize)
+		context.set_source_rgba(1.0, 0.0, 0.0, 0.75)
+		context.fill()

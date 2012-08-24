@@ -47,6 +47,7 @@ class TileMap:
 		self.layers = []
 		# Image files used
 		self.images = []
+		self.blocking = []
 
 	def resize(self, width, height, xOffset, yOffset):
 		"""
@@ -213,6 +214,7 @@ class TileMap:
 		m.height = height
 		m.tileSize = tileSize
 		m.addLayer("New Layer", True)
+		m.blocking = [[0 for i in range(height)] for j in range(width)]
 		return m
 
 

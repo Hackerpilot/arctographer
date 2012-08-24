@@ -42,6 +42,7 @@ class MapWriter(object):
 		self.writeInfo(self.__map.width, self.__map.height, self.__map.tileSize)
 		self.writeLayers(self.__map.layers)
 		self.writeImages(self.__map.images)
+		self.writeBlocking(self.__map.blocking)
 
 	def writeInfo(self, width, height, tileSize):
 		self.__dictionary["width"] = width
@@ -51,6 +52,9 @@ class MapWriter(object):
 	def writeLayers(self, layers):
 		for index, layer in enumerate(layers):
 			self.__writeLayer(layer, index)
+
+	def writeBlocking(self, blocking):
+		self.__dictionary["blocking"] = blocking
 
 	def writeImages(self, images):
 		for index, fileName in enumerate(images):
@@ -145,6 +149,9 @@ class MapReader:
 		else:
 			log.error("No layers specified in map file")
 			return None
+
+		if "blocking" in d:
+			self.map.blocking = d["blocking"]
 
 		return self.map
 

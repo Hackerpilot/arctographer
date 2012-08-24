@@ -863,8 +863,67 @@ class PolygonDrawTool(ShapeTool):
 			graphics.drawShape(self.__polygon, context, True)
 		ShapeTool.draw(self, context)
 
-class BlockTool(EditorTool):
+class BlockTool(TileSelectTool):
 	def __init__(self, controller, maxX, maxY):
-		EditorTool.__init__(self, controller, maxX, maxY)
-		self.setInstructions("Left-click to select tiles. WASD or arrow keys"
+		TileSelectTool.__init__(self, controller, 0, maxX, maxY)
+		self.setInstructions("Left-click to select tiles. Arrow keys"
 			+ " to toggle blocking")
+
+	def keyPress(self, key):
+		if key == 65362: # up
+			self.__modifyBlocks(1)
+			return True
+		if key == 65364: # down
+			self.__modifyBlocks(4)
+			return True
+		if key == 65361: # left
+			self.__modifyBlocks(8)
+			return True
+		if key == 65363: # right
+			self.__modifyBlocks(2)
+			return True
+		if key == 65535: #delete
+			for i in range(self.selectX1, self.selectX2):
+				for j in range(self.selectY1, self.selectY2):
+					self.getController().clearBlock(i, j)
+			return True
+		if key == 98: #b
+			self._blockSurroundingTiles()
+			return True
+		return False
+
+	def _blockSurroundingTiles(self):
+		controller = self.getController()
+		for i in range(self.selectX1, self.selectX2 + 1):
+			# Top edge
+			controller.setBlock(4, i, self.selectY1 - 1)
+			# Bottom edge
+			controller.setBlock(1, i, self.selectY2 + 1)
+		for i in range(self.selectY1, self.selectY2 + 1):
+			# Left edge
+			controller.setBlock(2, self.selectX1 - 1, i)
+			# Bottom edge
+			controller.setBlock(8, self.selectX2 + 1, i)
+
+	def __modifyBlocks(self, direction):
+		"""
+		@param direction: 1 = up, 2 = right, 4 = down, 8 = left
+		"""
+		controller = self.getController()
+		if direction == 1:
+			for i in range(self.selectX1, self.selectX2 + 1):
+				controller.toggleBlock(direction, i, self.selectY1)
+		elif direction == 2:
+			for i in range(self.selectY1, self.selectY2 + 1):
+				controller.toggleBlock(direction, self.selectX2, i)
+		elif direction == 4:
+			for i in range(self.selectX1, self.selectX2 + 1):
+				controller.toggleBlock(direction, i, self.selectY2)
+		elif direction == 8:
+			for i in range(self.selectY1, self.selectY2 + 1):
+				controller.toggleBlock(direction, self.selectX1, i)
+
+	def draw(self, context):
+		self.getController().drawBlocks(context)
+		TileSelectTool.draw(self, context)
+
